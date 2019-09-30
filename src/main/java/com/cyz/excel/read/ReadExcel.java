@@ -106,7 +106,7 @@ public final class ReadExcel {
 	 * @param sheet
 	 * @return
 	 */
-	public ResultExcel createList(int titleRow, int titleLength, Sheet sheet) {
+	private ResultExcel createList(int titleRow, int titleLength, Sheet sheet) {
 		int rows = sheet.getPhysicalNumberOfRows();
 		String[] titleStr = createTitle(sheet.getRow(titleRow), titleLength);
 		List<DataMap> list = new ArrayList<>();
@@ -125,7 +125,7 @@ public final class ReadExcel {
 	 * @param titleLength
 	 * @return
 	 */
-	public String[] createTitle(Row row, int titleLength) {
+	private String[] createTitle(Row row, int titleLength) {
 		String[] titleStr = new String[titleLength];
         for(int i = 0; i<titleLength;i++) {
         	if (row.getCell(i) == null) {
@@ -143,7 +143,7 @@ public final class ReadExcel {
 	 * @param titleStr
 	 * @return
 	 */
-	public DataMap readTextToMap(Row row, String[] titleStr) {
+	private DataMap readTextToMap(Row row, String[] titleStr) {
 		DataMap map = new DataMap(titleStr.length);
         for (int j = 0;j < titleStr.length; j++) {
         	Cell cell = row.getCell(j);

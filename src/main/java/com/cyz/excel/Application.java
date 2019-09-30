@@ -2,10 +2,9 @@ package com.cyz.excel;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import com.cyz.excel.entity.ResultExcel;
 import com.cyz.excel.read.Conversion;
 import com.cyz.excel.read.ReadExcel;
 
@@ -13,20 +12,11 @@ public class Application {
 	
 	public static void main(String[] args) {
 	    ReadExcel excel = ReadExcel.getInstance();
-	    List<Map<String, String>> list = excel.readXlsx("D:"+File.separator+"文档"+File.separator+"广东省投资平台"+File.separator+"负面清单"+File.separator+"A.市场_数据库映射.xlsx", 0, 0, 6);
-	    /*for (int i = 0; i <list.size(); i++) {
-			System.out.println(list.get(i));
-		}*/
+	    ResultExcel result = excel.readXlsx("D:"+File.separator+"文档"+File.separator+"广东省投资平台"+File.separator+"负面清单"+File.separator+"A.市场_数据库映射.xlsx", 0, 0, 6);
+	    result.getResult().forEach(o->System.out.println(o.keySet()));
 	    List<AA> aas = new ArrayList<Application.AA>();
-	    Map<String, String> mapper = new HashMap<String, String>();
-	    mapper.put("id", "id");
-	    mapper.put("projectNum", "项目号");
-	    mapper.put("forb", "禁止事项");
-	    mapper.put("forbDes", "禁止准入措施描述");
-	    mapper.put("subProjectNum", "子项目号");
-	    mapper.put("sort", "sort");
-	    Conversion con = new Conversion(mapper);
-	    list.forEach(o-> aas.add(con.mapperObj(o, AA.class)));
+	    Conversion con = new Conversion("projectNum", "forb", "forbDes", "subProjectNum", "id", "sort");
+	    result.getResult().forEach(o-> aas.add(con.mapperObj(o, AA.class)));
         aas.forEach(o->System.out.println(o));
 	}
 	

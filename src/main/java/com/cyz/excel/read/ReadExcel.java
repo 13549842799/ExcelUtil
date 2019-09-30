@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -15,6 +13,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.cyz.excel.entity.DataMap;
+import com.cyz.excel.entity.ResultExcel;
 /**
  * 
  * @author cyz
@@ -46,7 +47,7 @@ public final class ReadExcel {
 		return lastIndex > -1 && path.substring(lastIndex + 1).equals(type);
 	}
 	
-	public List<Map<String, String>> readToList(String path, int shell, int titleRow, int titleLength) {
+	public ResultExcel readToList(String path, int shell, int titleRow, int titleLength) {
 		 if (this.isXlsx(path)) {
 			 return readXlsx(path, shell, titleRow, titleLength);
 		 }
@@ -61,7 +62,7 @@ public final class ReadExcel {
 	 * @param titleLength
 	 * @return
 	 */
-	public List<Map<String, String>> readXlsx(String path, int shell, int titleRow, int titleLength) {
+	public ResultExcel readXlsx(String path, int shell, int titleRow, int titleLength) {
 		
 		File xlsFile = new File(path);
 
@@ -84,7 +85,7 @@ public final class ReadExcel {
 	 * @param titleLength
 	 * @return
 	 */
-	public List<Map<String, String>> readXls(String path, int shell, int titleRow, int titleLength) {
+	public ResultExcel readXls(String path, int shell, int titleRow, int titleLength) {
 		File xlsFile = new File(path);
 
         // get workbook
@@ -105,15 +106,15 @@ public final class ReadExcel {
 	 * @param sheet
 	 * @return
 	 */
-	public List<Map<String, String>> createList(int titleRow, int titleLength, Sheet sheet) {
+	public ResultExcel createList(int titleRow, int titleLength, Sheet sheet) {
 		int rows = sheet.getPhysicalNumberOfRows();
 		String[] titleStr = createTitle(sheet.getRow(titleRow), titleLength);
-		List<Map<String, String>> list = new ArrayList<>();
+		List<DataMap> list = new ArrayList<>();
 		for (int i = titleRow + 1; i < rows; i++) {
 		    //  get data from the row whick index is i
 		    list.add(readTextToMap(sheet.getRow(i), titleStr));
 		}
-		return list;
+		return new ResultExcel(list, titleStr);
 	}
 	
 	/**
@@ -136,8 +137,14 @@ public final class ReadExcel {
         return titleStr;
 	}
 	
-	public Map<String, String> readTextToMap(Row row, String[] titleStr) {
-        Map<String, String> map = new HashMap<>();
+	/**
+	 * read all the cell for a row and put cell'value as string  into the DataMap instance.
+	 * @param row
+	 * @param titleStr
+	 * @return
+	 */
+	public DataMap readTextToMap(Row row, String[] titleStr) {
+		DataMap map = new DataMap(titleStr.length);
         for (int j = 0;j < titleStr.length; j++) {
         	Cell cell = row.getCell(j);
         	if (cell == null) {
